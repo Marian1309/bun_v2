@@ -58,6 +58,31 @@ export const readOneOf = <T extends string>({ key, values, default_value }: Read
   return match;
 };
 
+type ReadNonNegativeIntParams = { key: string; default_value: number };
+
+/** Like `readPositiveInt`, with `0` allowed: for settings where zero means "off". */
+export const readNonNegativeInt = ({ key, default_value }: ReadNonNegativeIntParams): number => {
+  const parsed = Number(readString(key, { default_value: String(default_value) }));
+
+  if (!Number.isSafeInteger(parsed) || parsed < 0) throw new Error(`${key} must be a non-negative integer`);
+
+  return parsed;
+};
+
+/** Unset or empty → `undefined`: for keys whose absence switches a feature off. */
+export const readOptionalString = (key: string): string | undefined => {
+  const value = process.env[key];
+
+  return value === undefined || value === "" ? undefined : value;
+};
+
+/** Comma-separated; entries are trimmed and blanks dropped, so unset → `[]`. */
+export const readList = (key: string): string[] =>
+  (readOptionalString(key) ?? "")
+    .split(",")
+    .map((entry) => entry.trim())
+    .filter((entry) => entry !== "");
+
 /** Validates on first access and caches, so a section nobody reads never fails the boot. */
 const once = <T>(validate: () => T): (() => T) => {
   let value: T | undefined;
@@ -77,6 +102,32 @@ const appEnv = once(() => ({
   PORT: readPositiveInt({ key: "PORT", default_value: 3000 })
 }));
 
+/** HS256 key length below which brute force is practical (RFC 7518 §3.2: at least the hash size, 256 bits). */
+const MIN_JWT_SECRET_LENGTH = 32;
+
+const authEnv = once(() => {
+  const JWT_SECRET = readString("JWT_SECRET");
+
+  if (JWT_SECRET.length < MIN_JWT_SECRET_LENGTH)
+    throw new Error(`JWT_SECRET must be at least ${MIN_JWT_SECRET_LENGTH} characters`);
+
+  return { JWT_SECRET };
+});
+
+const httpEnv = once(() => ({
+  PUBLISH_API_KEY: readOptionalString("PUBLISH_API_KEY"),
+  ALLOWED_ORIGINS: readList("ALLOWED_ORIGINS"),
+  TRUST_PROXY_HOPS: readNonNegativeInt({ key: "TRUST_PROXY_HOPS", default_value: 0 })
+}));
+
+const redisEnv = once(() => {
+  const REDIS_URL = readOptionalString("REDIS_URL");
+
+  if (REDIS_URL !== undefined && !URL.canParse(REDIS_URL)) throw new Error("REDIS_URL must be a valid URL");
+
+  return { REDIS_URL };
+});
+
 export const readNodeEnv = (): NodeEnv =>
   readOneOf({ key: "NODE_ENV", values: NODE_ENVS, default_value: "development" });
 
@@ -84,5 +135,19 @@ export const readNodeEnv = (): NodeEnv =>
 export const env = {
   get app() {
     return appEnv();
+  },
+  get auth() {
+    return authEnv();
+  },
+  get http() {
+    return httpEnv();
+  },
+  get redis() {
+    return redisEnv();
   }
+};
+
+/** Forces every section now: the boot fails on a bad key instead of the first request that reads it. */
+export const validateEnv = () => {
+  for (const read of [appEnv, authEnv, httpEnv, redisEnv]) read();
 };

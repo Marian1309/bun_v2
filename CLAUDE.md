@@ -5,8 +5,7 @@ wins on conflict.
 
 ## Toolchain
 
-- **Bun only** (`bun`, `bunx`, `bun add`); never npm/npx/pnpm/yarn/node/ts-node/jest/vitest. Pin exact versions on
-  `bun add` and check the `package.json` diff.
+- **Bun only** (`bun`, `bunx`, `bun add`). Pin exact versions on `bun add` and check the `package.json` diff.
 - Typecheck `bun run typecheck`; lint + format + imports `bun run lint` (Biome); `bun run format` fixes.
 - **No tests.** Tests are banned in this repo: no `*.test.ts`, no `bun:test`, no test runners or test deps.
 - **Env.** `import { env } from "@/config/env"`: one lazily validated section per domain (getter on `env`), built from the
