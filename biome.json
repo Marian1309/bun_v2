@@ -1,0 +1,136 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": ["**", "!node_modules", "!.claude"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 120,
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "expand": "auto"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "suspicious": {
+        "noConsole": "error",
+        "noEqualsToNull": "error",
+        "noShadow": "error",
+        "noImportCycles": "error",
+        "noDeprecatedImports": "warn",
+        "noEmptyBlockStatements": "error",
+        "noUnnecessaryConditions": "error",
+        "useAwait": "error",
+        "noTsIgnore": "error"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "noUselessUndefined": "error",
+        "noExcessiveCognitiveComplexity": "error",
+        "useMaxParams": { "level": "error", "options": { "max": 2 } }
+      },
+      "performance": {
+        "noNamespaceImport": "error",
+        "noBarrelFile": "error",
+        "noReExportAll": "error",
+        "useTopLevelRegex": "error"
+      },
+      "style": {
+        "useNodejsImportProtocol": { "level": "on", "fix": "safe" },
+        "useImportType": { "level": "on", "options": { "style": "separatedType" } },
+        "useConsistentTypeDefinitions": { "level": "error", "options": { "style": "type" } },
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "filenameCases": ["kebab-case"], "requireAscii": true }
+        },
+        "noEnum": "error",
+        "noNonNullAssertion": "error",
+        "noNestedTernary": "error",
+        "noParameterAssign": "error",
+        "noUselessElse": "error",
+        "useCollapsedIf": "error",
+        "useConsistentArrayType": "error",
+        "useErrorCause": "error",
+        "useExplicitLengthCheck": "error",
+        "useNumericSeparators": "error",
+        "useThrowOnlyError": "error",
+        "noExportedImports": "error",
+        "noProcessEnv": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "bun:test": "Tests are banned in this repo (CLAUDE.md)."
+            }
+          }
+        }
+      },
+      "correctness": {
+        "noUndeclaredDependencies": "error",
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error",
+        "noUnusedFunctionParameters": "error"
+      },
+      "nursery": {
+        "noFloatingPromises": "error",
+        "noMisusedPromises": "error",
+        "useAwaitThenable": "error",
+        "noUselessAwait": "error",
+        "useConsistentFunctionStyle": "error",
+        "useExhaustiveSwitchCases": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "trailingCommas": "none",
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "attributePosition": "auto"
+    }
+  },
+  "markdown": {
+    "formatter": { "enabled": false }
+  },
+  "overrides": [
+    {
+      "includes": ["src/config/env.ts"],
+      "linter": { "rules": { "style": { "noProcessEnv": "off" } } }
+    },
+    {
+      "includes": ["src/core/logger.ts"],
+      "linter": { "rules": { "suspicious": { "noConsole": "off" } } }
+    }
+  ],
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              ":BUN:",
+              ":NODE:",
+              ":BLANK_LINE:",
+              ":PACKAGE:",
+              ":BLANK_LINE:",
+              "@/**",
+              ":BLANK_LINE:",
+              ":PATH:"
+            ],
+            "identifierOrder": "natural"
+          }
+        }
+      }
+    }
+  }
+}
