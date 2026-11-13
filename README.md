@@ -135,6 +135,10 @@ docker build -t bun-ws .
 docker run -p 3000:3000 -e JWT_SECRET=… bun-ws
 ```
 
+The app ships as a single binary: the server compiled with `bun build --compile` (Bun runtime included) on `alpine` plus
+`libstdc++`, run as `nobody`. The image has no `node_modules`, no Bun CLI and no source code in it. Multi-arch
+(`docker buildx build --platform linux/amd64,linux/arm64`) works: each platform compiles for itself.
+
 ## Layout
 
 ```

@@ -1,10 +1,5 @@
-node_modules
-.git
-.claude
-.env
-.env.*
-!.env.example
-*.md
-Dockerfile
-ngrok.exe
-scripts
+# Allowlist: the build stage needs only the sources it compiles.
+*
+!index.ts
+!tsconfig.json
+!src

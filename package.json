@@ -6,7 +6,7 @@
   "scripts": {
     "start": "bun index.ts",
     "dev": "bun --watch index.ts",
-    "ngrok": "bun scripts/ngrok.ts",
+    "ngrok": "./ngrok.exe http 3000",
     "typecheck": "bun check",
     "lint": "biome check",
     "format": "biome check --write ."

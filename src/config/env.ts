@@ -120,11 +120,6 @@ const httpEnv = once(() => ({
   TRUST_PROXY_HOPS: readNonNegativeInt({ key: "TRUST_PROXY_HOPS", default_value: 0 })
 }));
 
-/** Dev-only: read by `scripts/ngrok.ts`, never by the server, so it stays out of `validateEnv`. */
-const tunnelEnv = once(() => ({
-  BASE_URL: readUrl("BASE_URL")
-}));
-
 const redisEnv = once(() => {
   const REDIS_URL = readOptionalString("REDIS_URL");
 
@@ -149,9 +144,6 @@ export const env = {
   },
   get redis() {
     return redisEnv();
-  },
-  get tunnel() {
-    return tunnelEnv();
   }
 };
 
